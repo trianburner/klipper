@@ -10,7 +10,7 @@ config STM32_SELECT
     select HAVE_GPIO_I2C if !MACH_STM32F031
     select HAVE_GPIO_SPI if !MACH_STM32F031
     select HAVE_GPIO_SDIO if MACH_STM32F4
-    select HAVE_GPIO_HARD_PWM if MACH_STM32F042 || MACH_STM32F070 || MACH_STM32F072 || MACH_STM32F1 || MACH_STM32F4 || MACH_STM32F7 || MACH_STM32G0 || MACH_STM32G4 || MACH_STM32H7
+    select HAVE_GPIO_HARD_PWM if MACH_STM32F042 || MACH_STM32F070 || MACH_STM32F072 || MACH_STM32F1 || MACH_STM32F4 || MACH_STM32F7 || MACH_STM32G0 || MACH_STM32G4 || MACH_STM32H7 || MACH_STM32U5
     select HAVE_STRICT_TIMING
     select HAVE_CHIPID
     select HAVE_STEPPER_OPTIMIZED_BOTH_EDGE if !MACH_STM32H7
@@ -103,6 +103,9 @@ choice
     config MACH_STM32L412
         bool "STM32L412"
         select MACH_STM32L4
+    config MACH_STM32U585
+        bool "STM32U585"
+        select MACH_STM32U5
     config MACH_N32G452
         bool "Nation N32G452"
         select MACH_N32G45x
@@ -147,6 +150,8 @@ config MACH_STM32F4x5 # F405, F407, F429 series
     bool
 config MACH_STM32L4
     bool
+config MACH_STM32U5
+    bool
 config MACH_N32G45x
     bool
 config HAVE_STM32_USBFS
@@ -155,7 +160,7 @@ config HAVE_STM32_USBFS
     default y if (MACH_STM32F1 || MACH_STM32F070) && !STM32_CLOCK_REF_INTERNAL
 config HAVE_STM32_USBOTG
     bool
-    default y if MACH_STM32F2 || MACH_STM32F4 || MACH_STM32F7 || MACH_STM32H7
+    default y if MACH_STM32F2 || MACH_STM32F4 || MACH_STM32F7 || MACH_STM32H7 || MACH_STM32U5
 config STM32_USB_DOUBLE_BUFFER_TX
     bool
     default y
@@ -164,7 +169,7 @@ config HAVE_STM32_CANBUS
     default y if MACH_STM32F1 || MACH_STM32F2 || MACH_STM32F4x5 || MACH_STM32F446 || MACH_STM32F0x2
 config HAVE_STM32_FDCANBUS
     bool
-    default y if MACH_STM32G0B1 || MACH_STM32H7 || MACH_STM32G4
+    default y if MACH_STM32G0B1 || MACH_STM32H7 || MACH_STM32G4 || MACH_STM32U5
 config HAVE_STM32_USBCANBUS
     bool
     depends on HAVE_STM32_USBFS || HAVE_STM32_USBOTG
@@ -196,6 +201,7 @@ config MCU
     default "stm32h743xx" if MACH_STM32H743
     default "stm32h750xx" if MACH_STM32H750
     default "stm32l412xx" if MACH_STM32L412
+    default "stm32u585xx" if MACH_STM32U585
     default "stm32f103xe" if MACH_N32G45x
 
 config CLOCK_FREQ
@@ -214,6 +220,7 @@ config CLOCK_FREQ
     default 520000000 if MACH_STM32H723
     default 400000000 if MACH_STM32H743 || MACH_STM32H750
     default 80000000 if MACH_STM32L412
+    default 160000000 if MACH_STM32U585
     default 64000000 if MACH_N32G45x && STM32_CLOCK_REF_INTERNAL
     default 128000000 if MACH_N32G45x
 
@@ -227,7 +234,7 @@ config FLASH_SIZE
     default 0x20000 if MACH_STM32G0 || MACH_STM32G431
     default 0x40000 if MACH_STM32G474
     default 0x20000 if MACH_STM32H750
-    default 0x200000 if MACH_STM32H743 || MACH_STM32F765
+    default 0x200000 if MACH_STM32H743 || MACH_STM32F765 || MACH_STM32U585
     default 0x20000 if MACH_N32G45x
 
 config FLASH_BOOT_ADDRESS
@@ -256,6 +263,7 @@ config RAM_SIZE
     default 0x9000 if MACH_STM32G07x
     default 0x24000 if MACH_STM32G0Bx
     default 0x20000 if MACH_STM32H7
+    default 0xC4800 if MACH_STM32U585
     default 0x10000 if MACH_N32G45x
 
 config STACK_SIZE
@@ -279,6 +287,7 @@ config STM32_DFU_ROM_ADDRESS
     default 0x1fffc800 if MACH_STM32F072
     default 0x1fff0000 if MACH_STM32F4 || MACH_STM32F7 || MACH_STM32G0 || MACH_STM32G4 || MACH_STM32L4
     default 0x1ff09800 if MACH_STM32H7
+    default 0x0BF90000 if MACH_STM32U5
     default 0
 
 
@@ -444,6 +453,9 @@ choice
     config STM32_SERIAL_USART6_ALT_PC7_PC6
         bool "Serial (on USART6 PC7/PC6)" if LOW_LEVEL_OPTIONS && MACH_STM32F401
         select SERIAL
+    config STM32_SERIAL_LPUART1_PG7_PG8
+        bool "Serial (on LPUART1 PG7/PG8)" if MACH_STM32U5
+        select SERIAL
     config STM32_CANBUS_PA11_PA12
         bool "CAN bus (on PA11/PA12)"
         depends on HAVE_STM32_CANBUS || HAVE_STM32_FDCANBUS
@@ -469,7 +481,7 @@ choice
         depends on (MACH_STM32F4 && HAVE_STM32_CANBUS) || MACH_STM32H7
         select CANSERIAL
     config STM32_MMENU_CANBUS_PB12_PB13
-        bool "CAN bus (on PB12/PB13)" if LOW_LEVEL_OPTIONS
+        bool "CAN bus (on PB12/PB13)" if LOW_LEVEL_OPTIONS && !MACH_STM32U5
         depends on (MACH_STM32F4 && HAVE_STM32_CANBUS) || HAVE_STM32_FDCANBUS
         select CANSERIAL
     config STM32_MMENU_CANBUS_PD0_PD1
@@ -477,19 +489,23 @@ choice
         depends on HAVE_STM32_CANBUS || HAVE_STM32_FDCANBUS
         select CANSERIAL
     config STM32_MMENU_CANBUS_PB0_PB1
-        bool "CAN bus (on PB0/PB1)"
+        bool "CAN bus (on PB0/PB1)" if !MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
         select CANSERIAL
     config STM32_MMENU_CANBUS_PD12_PD13
-        bool "CAN bus (on PD12/PD13)"
+        bool "CAN bus (on PD12/PD13)" if !MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
         select CANSERIAL
     config STM32_MMENU_CANBUS_PC2_PC3
-        bool "CAN bus (on PC2/PC3)"
+        bool "CAN bus (on PC2/PC3)" if !MACH_STM32U5
+        depends on HAVE_STM32_FDCANBUS
+        select CANSERIAL
+    config STM32_MMENU_CANBUS_PF7_PF8
+        bool "CAN bus (on PF7/PF8)" if MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
         select CANSERIAL
     config STM32_MMENU_CANBUS_PH13_PH14
-        bool "CAN bus (on PH13/PH14)" if MACH_STM32H743
+        bool "CAN bus (on PH13/PH14)" if MACH_STM32H743 || MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
         select CANSERIAL
     config STM32_USBCANBUS_PA11_PA12
@@ -508,22 +524,25 @@ choice
         bool "CAN bus (on PB5/PB6)"
         depends on (MACH_STM32F4 && HAVE_STM32_CANBUS) || MACH_STM32H7 || MACH_STM32G0B1
     config STM32_CMENU_CANBUS_PB12_PB13
-        bool "CAN bus (on PB12/PB13)"
+        bool "CAN bus (on PB12/PB13)" if !MACH_STM32U5
         depends on (MACH_STM32F4 && HAVE_STM32_CANBUS) || HAVE_STM32_FDCANBUS
     config STM32_CMENU_CANBUS_PD0_PD1
         bool "CAN bus (on PD0/PD1)"
         depends on HAVE_STM32_CANBUS || HAVE_STM32_FDCANBUS
     config STM32_CMENU_CANBUS_PB0_PB1
-        bool "CAN bus (on PB0/PB1)"
+        bool "CAN bus (on PB0/PB1)" if !MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
     config STM32_CMENU_CANBUS_PD12_PD13
-        bool "CAN bus (on PD12/PD13)"
+        bool "CAN bus (on PD12/PD13)" if !MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
     config STM32_CMENU_CANBUS_PC2_PC3
-        bool "CAN bus (on PC2/PC3)"
+        bool "CAN bus (on PC2/PC3)" if !MACH_STM32U5
+        depends on HAVE_STM32_FDCANBUS
+    config STM32_CMENU_CANBUS_PF7_PF8
+        bool "CAN bus (on PF7/PF8)" if MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
     config STM32_CMENU_CANBUS_PH13_PH14
-        bool "CAN bus (on PH13/PH14)" if MACH_STM32H743
+        bool "CAN bus (on PH13/PH14)" if MACH_STM32H743 || MACH_STM32U5
         depends on HAVE_STM32_FDCANBUS
 endchoice
 
@@ -552,6 +571,9 @@ config STM32_CANBUS_PD12_PD13
 config STM32_CANBUS_PC2_PC3
     bool
     default y if STM32_MMENU_CANBUS_PC2_PC3 || STM32_CMENU_CANBUS_PC2_PC3
+config STM32_CANBUS_PF7_PF8
+    bool
+    default y if STM32_MMENU_CANBUS_PF7_PF8 || STM32_CMENU_CANBUS_PF7_PF8
 config STM32_CANBUS_PH13_PH14
     bool
     default y if STM32_MMENU_CANBUS_PH13_PH14 || STM32_CMENU_CANBUS_PH13_PH14
