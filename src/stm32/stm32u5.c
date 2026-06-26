@@ -1,6 +1,7 @@
 // Code to setup clocks and gpio on stm32f1
 //
 // Copyright (C) 2019-2022  Kevin O'Connor <kevin@koconnor.net>
+// Copyright (C) 2026  Brian Turner <trian.burner@outlook.com>
 //
 // This file may be distributed under the terms of the GNU GPLv3 license.
 
@@ -13,8 +14,7 @@
 #include "internal.h" // enable_pclock
 #include "sched.h" // sched_main
 
-#define FREQ_PERIPH_DIV 1
-#define FREQ_PERIPH (CONFIG_CLOCK_FREQ / FREQ_PERIPH_DIV)
+#define FREQ_PERIPH CONFIG_CLOCK_FREQ
 #define FREQ_USB 48000000
 
 /****************************************************************
@@ -174,7 +174,6 @@ armcm_main(void)
     RCC->APB3ENR = 0x0;
 
     // dfu_reboot_check();
-
     
     // Enable AHB3EN register for PWR peripheral
     RCC->AHB3ENR |= RCC_AHB3ENR_PWREN;
@@ -186,5 +185,6 @@ armcm_main(void)
     // Setup clocks
     clock_setup();
 
+    // Go to main task scheduler
     sched_main();
 }

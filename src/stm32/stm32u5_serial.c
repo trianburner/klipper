@@ -1,6 +1,7 @@
 // STM32 serial
 //
 // Copyright (C) 2019  Kevin O'Connor <kevin@koconnor.net>
+// Copyright (C) 2026  Brian Turner <trian.burner@outlook.com>
 //
 // This file may be distributed under the terms of the GNU GPLv3 license.
 
@@ -150,7 +151,7 @@ USARTx_IRQHandler(void)
         serial_rx_byte(USARTx->RDR);
     }
 
-    // 
+    // If transmit data register is empty, send data if available
     if (sr & USART_ISR_TXE && USARTx->CR1 & USART_CR1_TXEIE) {
         uint8_t data;
         int ret = serial_get_tx_byte(&data);
@@ -181,13 +182,11 @@ serial_init(void)
     uint32_t div = DIV_ROUND_CLOSEST(pclk, CONFIG_SERIAL_BAUD);
     #endif
     USARTx->BRR = div;
-    //USARTx->CR3 = USART_CR3_OVRDIS;
 
     USARTx->CR1 = (USART_CR1_RE | USART_CR1_TE | USART_CR1_RXNEIE);
 
     USARTx->CR1 |= USART_CR1_UE;
 
-    //USARTx->CR1 = CR1_FLAGS;
     armcm_enable_irq(USARTx_IRQHandler, USARTx_IRQn, 0);    
 
     gpio_peripheral(GPIO_Rx, GPIO_FUNCTION(GPIO_AF_MODE), 1);
