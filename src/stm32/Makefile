@@ -14,6 +14,7 @@ dirs-$(CONFIG_MACH_STM32G0) += lib/stm32g0
 dirs-$(CONFIG_MACH_STM32G4) += lib/stm32g4
 dirs-$(CONFIG_MACH_STM32H7) += lib/stm32h7
 dirs-$(CONFIG_MACH_STM32L4) += lib/stm32l4
+dirs-$(CONFIG_MACH_STM32U5) += lib/stm32u5
 
 MCU := $(shell echo $(CONFIG_MCU))
 MCU_UPPER := $(shell echo $(CONFIG_MCU) | tr a-z A-Z | tr X x)
@@ -30,6 +31,7 @@ CFLAGS-$(CONFIG_MACH_STM32G0) += -mcpu=cortex-m0plus -Ilib/stm32g0/include
 CFLAGS-$(CONFIG_MACH_STM32G4) += -mcpu=cortex-m4 -Ilib/stm32g4/include
 CFLAGS-$(CONFIG_MACH_STM32H7) += -mcpu=cortex-m7 -Ilib/stm32h7/include
 CFLAGS-$(CONFIG_MACH_STM32L4) += -mcpu=cortex-m4 -Ilib/stm32l4/include
+CFLAGS-$(CONFIG_MACH_STM32U5) += -mcpu=cortex-m33 -Ilib/stm32u5/include
 CFLAGS += $(CFLAGS-y) -D$(MCU_UPPER) -mthumb -Ilib/cmsis-core -Ilib/fast-hash
 
 CFLAGS_klipper.elf += -nostdlib -lgcc -lc_nano
@@ -49,6 +51,7 @@ src-$(CONFIG_MACH_STM32G0) += stm32/stm32g0.c
 src-$(CONFIG_MACH_STM32G4) += stm32/stm32g4.c ../lib/stm32g4/system_stm32g4xx.c
 src-$(CONFIG_MACH_STM32H7) += stm32/stm32h7.c ../lib/stm32h7/system_stm32h7xx.c
 src-$(CONFIG_MACH_STM32L4) += stm32/stm32l4.c ../lib/stm32l4/system_stm32l4xx.c
+src-$(CONFIG_MACH_STM32U5) += stm32/stm32u5.c ../lib/stm32u5/system_stm32u5xx.c
 timer-src-y := generic/armcm_timer.c
 timer-src-$(CONFIG_MACH_STM32F0) := generic/timer_irq.c stm32/stm32f0_timer.c
 timer-src-$(CONFIG_MACH_STM32G0) := generic/timer_irq.c stm32/stm32f0_timer.c
@@ -63,9 +66,11 @@ adc-src-$(CONFIG_MACH_STM32G0) := stm32/stm32f0_adc.c
 adc-src-$(CONFIG_MACH_STM32G4) := stm32/stm32h7_adc.c
 adc-src-$(CONFIG_MACH_STM32H7) := stm32/stm32h7_adc.c
 adc-src-$(CONFIG_MACH_STM32L4) := stm32/stm32h7_adc.c
+adc-src-$(CONFIG_MACH_STM32U5) := stm32/stm32u5_adc.c
 src-$(CONFIG_WANT_ADC) += $(adc-src-y)
 spi-src-y := stm32/spi.c
 spi-src-$(CONFIG_MACH_STM32H7) := stm32/stm32h7_spi.c
+spi-src-$(CONFIG_MACH_STM32U5) := stm32/stm32u5_spi.c
 src-$(CONFIG_WANT_SPI) += $(spi-src-y)
 i2c-src-y := stm32/stm32f0_i2c.c
 i2c-src-$(CONFIG_MACH_STM32F1) := stm32/i2c.c
@@ -77,6 +82,7 @@ serial-src-$(CONFIG_MACH_STM32F0) := stm32/stm32f0_serial.c
 serial-src-$(CONFIG_MACH_STM32G0) := stm32/stm32f0_serial.c
 serial-src-$(CONFIG_MACH_STM32G4) := stm32/stm32f0_serial.c
 serial-src-$(CONFIG_MACH_STM32H7) := stm32/stm32f0_serial.c
+serial-src-$(CONFIG_MACH_STM32U5) := stm32/stm32u5_serial.c
 src-$(CONFIG_SERIAL) += $(serial-src-y) generic/serial_irq.c
 usb-src-$(CONFIG_HAVE_STM32_USBFS) := stm32/usbfs.c
 usb-src-$(CONFIG_HAVE_STM32_USBOTG) := stm32/usbotg.c

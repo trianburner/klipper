@@ -22,6 +22,8 @@
 #include "stm32h7xx.h"
 #elif CONFIG_MACH_STM32L4
 #include "stm32l4xx.h"
+#elif CONFIG_MACH_STM32U5
+#include "stm32u5xx.h"
 #endif
 
 // gpio.c
